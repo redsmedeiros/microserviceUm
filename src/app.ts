@@ -4,13 +4,17 @@ import * as cors from 'cors';
 import { Request, Response } from 'express';
 import { createConnection } from 'typeorm';
 import { Product } from './entity/product';
+import * as ampq from 'amqplib/callback_api'
 
 
 createConnection().then(db => {
 
-
     //do model criar um repositorio
     const productRepository = db.getRepository(Product)
+
+    ampq.connect('amqps://ibalqlol:w_CUD7SWFGW5qkOqEPrKPBbZHIXxpYLj@jackal.rmq.cloudamqp.com/ibalqlol', (error0)=>{
+        //39:10
+    })
 
     //criar a aplicação express
     const app = express();
