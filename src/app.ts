@@ -12,11 +12,17 @@ createConnection().then(db => {
     //do model criar um repositorio
     const productRepository = db.getRepository(Product)
 
-    ampq.connect('amqps://ibalqlol:w_CUD7SWFGW5qkOqEPrKPBbZHIXxpYLj@jackal.rmq.cloudamqp.com/ibalqlol', (error0)=>{
-        //39:10
-    })
+    ampq.connect('amqps://ibalqlol:w_CUD7SWFGW5qkOqEPrKPBbZHIXxpYLj@jackal.rmq.cloudamqp.com/ibalqlol', (error0, connection)=>{
+        if(error0){
+            throw error0
+        }
 
-    //criar a aplicação express
+        connection.createChannel((error1, channel)=>{
+            if(error1){
+                throw error1
+            }
+
+            //criar a aplicação express
     const app = express();
 
     //resolver o cors para o front - resolver json
@@ -123,6 +129,10 @@ createConnection().then(db => {
 
     //escutar a porta de backend
     app.listen(5000, ()=> console.log('Servidor na porta 5000'))
+        })
+    })
+
+    
 })
 
 
