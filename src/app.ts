@@ -35,6 +35,7 @@ createConnection().then(db => {
 
         //buscar todos os produtos
         const products = await productRepository.find()
+
         //retornar os produtos
         res.json(products)
     })
@@ -46,6 +47,9 @@ createConnection().then(db => {
 
         //salvar no banco
         const result = await productRepository.save(product)
+
+        //testar o rabbit enviando um evento passando com primeiro parametro o nome
+        channel.sendToQueue('product_creater', Buffer.from(JSON.stringify(result)))
 
         return res.send(result)
     })
@@ -78,6 +82,9 @@ createConnection().then(db => {
 
             const result = await productRepository.save(product)
 
+            //testar o rabbit enviando um evento passando com primeiro parametro o nome
+            channel.sendToQueue('product_updated', Buffer.from(JSON.stringify(result)))
+
             return res.send(result)
 
         }catch(error){
@@ -96,6 +103,9 @@ createConnection().then(db => {
         try{
 
             const result = await productRepository.delete(id)
+
+            //testar o rabbit enviando um evento passando com primeiro parametro o nome
+            channel.sendToQueue('product_deleted', Buffer.from(req.params.id))
 
             res.send({result})
 
@@ -129,6 +139,12 @@ createConnection().then(db => {
 
     //escutar a porta de backend
     app.listen(5000, ()=> console.log('Servidor na porta 5000'))
+
+    //fechar a conexão
+    process.on('beforeExit', ()=>{
+
+        connection.close()
+    })
         })
     })
 
